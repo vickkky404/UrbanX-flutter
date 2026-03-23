@@ -9,7 +9,11 @@ class AuthService {
   late SharedPreferences _prefs;
 
   Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
+    try {
+      _prefs = await SharedPreferences.getInstance();
+    } catch (e) {
+      print('SharedPreferences init error: $e');
+    }
   }
 
   // Get current user
@@ -133,7 +137,11 @@ class AuthService {
     try {
       await _googleSignIn.signOut();
       await _firebaseAuth.signOut();
-      await _prefs.remove('user_data');
+      try {
+        await _prefs.remove('user_data');
+      } catch (_) {
+        // Ignore if prefs not initialized
+      }
     } catch (e) {
       throw Exception('Failed to sign out: $e');
     }
@@ -141,18 +149,26 @@ class AuthService {
 
   // Get saved user from local storage
   UserModel? getSavedUser() {
-    final userJson = _prefs.getString('user_data');
-    if (userJson != null) {
-      return UserModel.fromJson(
-        Map<String, dynamic>.from(userJson as Map),
-      );
+    try {
+      final userJson = _prefs.getString('user_data');
+      if (userJson != null) {
+        return UserModel.fromJson(
+          Map<String, dynamic>.from(userJson as Map),
+        );
+      }
+    } catch (e) {
+      print('Error retrieving saved user: $e');
     }
     return null;
   }
 
   // Save user to local storage
   Future<void> _saveUserLocally(UserModel user) async {
-    await _prefs.setString('user_data', user.toJson().toString());
+    try {
+      await _prefs.setString('user_data', user.toJson().toString());
+    } catch (e) {
+      print('Error saving user locally: $e');
+    }
   }
 
   // Handle Firebase Auth exceptions

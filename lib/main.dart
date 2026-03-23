@@ -9,14 +9,19 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Initialize Firebase with error handling
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  // Initialize Auth Service
-  final authService = AuthService();
-  await authService.init();
+    // Initialize Auth Service
+    final authService = AuthService();
+    await authService.init();
+  } catch (e) {
+    debugPrint('Firebase initialization error: $e');
+    debugPrint('App will continue without Firebase. Update firebase_options.dart with your config.');
+  }
 
   runApp(
     const ProviderScope(

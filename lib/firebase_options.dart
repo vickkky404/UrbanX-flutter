@@ -35,43 +35,45 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'YOUR_WEB_API_KEY',
-    appId: 'YOUR_WEB_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    authDomain: 'YOUR_AUTH_DOMAIN',
-    databaseURL: 'YOUR_DATABASE_URL',
-    storageBucket: 'YOUR_STORAGE_BUCKET',
-    measurementId: 'YOUR_MEASUREMENT_ID',
+    apiKey: 'AIzaSyDummyWebApiKey123456789',
+    appId: '1:123456789:web:abcdef1234567890',
+    messagingSenderId: '123456789',
+    projectId: 'urbanx-demo',
+    authDomain: 'urbanx-demo.firebaseapp.com',
+    databaseURL: 'https://urbanx-demo.firebaseio.com',
+    storageBucket: 'urbanx-demo.appspot.com',
+    measurementId: 'G-DUMMY123456',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'YOUR_ANDROID_API_KEY',
-    appId: 'YOUR_ANDROID_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    databaseURL: 'YOUR_DATABASE_URL',
-    storageBucket: 'YOUR_STORAGE_BUCKET',
+    apiKey: 'AIzaSyDummyAndroidApiKey123456789',
+    appId: '1:123456789:android:abcdef1234567890',
+    messagingSenderId: '123456789',
+    projectId: 'urbanx-demo',
+    databaseURL: 'https://urbanx-demo.firebaseio.com',
+    storageBucket: 'urbanx-demo.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'YOUR_IOS_API_KEY',
-    appId: 'YOUR_IOS_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    databaseURL: 'YOUR_DATABASE_URL',
-    storageBucket: 'YOUR_STORAGE_BUCKET',
-    iosBundleId: 'com.example.urban_x',
+    apiKey: 'AIzaSyDummyIOSApiKey123456789',
+    appId: '1:123456789:ios:abcdef1234567890',
+    messagingSenderId: '123456789',
+    projectId: 'urbanx-demo',
+    databaseURL: 'https://urbanx-demo.firebaseio.com',
+    storageBucket: 'urbanx-demo.appspot.com',
+    iosBundleId: 'com.example.urbanX',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'YOUR_MACOS_API_KEY',
-    appId: 'YOUR_MACOS_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    databaseURL: 'YOUR_DATABASE_URL',
-    storageBucket: 'YOUR_STORAGE_BUCKET',
-    iosBundleId: 'com.example.urban_x',
+    apiKey: 'AIzaSyDummyMacOSApiKey123456789',
+    appId: '1:123456789:macos:abcdef1234567890',
+    messagingSenderId: '123456789',
+    projectId: 'urbanx-demo',
+    databaseURL: 'https://urbanx-demo.firebaseio.com',
+    storageBucket: 'urbanx-demo.appspot.com',
+    iosBundleId: 'com.example.urbanX',
   );
 }
+
+
 
