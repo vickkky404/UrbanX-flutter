@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +16,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  Timer? _navigationTimer;
 
   @override
   void initState() {
@@ -30,9 +33,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _animationController.forward();
     
     // Schedule navigation after animation completes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(seconds: 3), _navigateAway);
-    });
+    _navigationTimer = Timer(const Duration(seconds: 3), _navigateAway);
   }
 
   void _navigateAway() {
@@ -49,6 +50,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   void dispose() {
     _animationController.dispose();
+    _navigationTimer?.cancel();
     super.dispose();
   }
 
