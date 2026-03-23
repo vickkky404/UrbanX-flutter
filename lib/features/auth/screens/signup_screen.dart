@@ -4,34 +4,40 @@ import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class SignUpScreen extends ConsumerStatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
+  late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _nameController = TextEditingController();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _handleSignIn() async {
+  void _handleSignUp() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -40,17 +46,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     try {
       await ref.read(
-        signInProvider(
+        signUpProvider(
           (
             email: _emailController.text.trim(),
             password: _passwordController.text,
+            displayName: _nameController.text.trim(),
           ),
         ).future,
       );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Logged in successfully!')),
+          const SnackBar(content: Text('Account created successfully!')),
         );
         context.go('/dashboard');
       }
@@ -67,15 +74,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  // Google sign-in implementation - commented for future use
-  // void _handleGoogleSignIn() async {
+  // Google sign-up implementation - commented for future use
+  // void _handleGoogleSignUp() async {
   //   setState(() => _isLoading = true);
   //
   //   try {
   //     await ref.read(googleSignInProvider.future);
   //     if (mounted) {
   //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text('Signed in successfully!')),
+  //         const SnackBar(content: Text('Signed up successfully!')),
   //       );
   //       context.go('/dashboard');
   //     }
@@ -103,9 +110,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
                 const Text(
-                  'Welcome Back',
+                  'Create Account',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -113,13 +120,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Sign in to your UrbanX account',
+                  'Join UrbanX and start your ride',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey.shade600,
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 32),
+                CustomTextFormField(
+                  label: 'Full Name',
+                  hint: 'Enter your full name',
+                  controller: _nameController,
+                  prefixIcon: const Icon(Icons.person_outline),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Please enter your name';
+                    }
+                    if (value!.length < 2) {
+                      return 'Name must be at least 2 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
                 CustomTextFormField(
                   label: 'Email',
                   hint: 'Enter your email',
@@ -147,64 +170,60 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     if (value?.isEmpty ?? true) {
                       return 'Please enter your password';
                     }
+                    if (value!.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
                     return null;
                   },
                 ),
-                const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      // Navigate to forgot password screen
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Forgot password feature coming soon',
-                          ),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF6750A4),
-                      ),
-                    ),
-                  ),
+                const SizedBox(height: 16),
+                CustomTextFormField(
+                  label: 'Confirm Password',
+                  hint: 'Confirm your password',
+                  controller: _confirmPasswordController,
+                  isPassword: true,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Please confirm your password';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
                 CustomButton(
-                  label: 'Sign In',
-                  onPressed: _handleSignIn,
+                  label: 'Create Account',
+                  onPressed: _handleSignUp,
                   isLoading: _isLoading,
                 ),
                 const SizedBox(height: 16),
-                DividerWithText(text: 'Or sign in with'),
+                DividerWithText(text: 'Or sign up with'),
                 const SizedBox(height: 16),
                 // Google Sign In Button - Note: Add assets in pubspec.yaml
                 // SocialAuthButton(
                 //   iconPath: 'assets/icons/google.png',
-                //   label: 'Sign in with Google',
-                //   onPressed: _handleGoogleSignIn,
+                //   label: 'Sign up with Google',
+                //   onPressed: _handleGoogleSignUp,
                 //   isLoading: _isLoading,
                 // ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Don\'t have an account? ',
+                      'Already have an account? ',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey.shade600,
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => context.go('/signup'),
+                      onTap: () => context.go('/login'),
                       child: const Text(
-                        'Sign Up',
+                        'Sign In',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -222,3 +241,4 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 }
+
