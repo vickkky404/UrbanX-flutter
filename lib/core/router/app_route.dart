@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
-import 'package:urbanx/features/splash/screens/splash_screen.dart';
-import 'package:urbanx/features/auth/screens/login_screen.dart';
-import 'package:urbanx/features/dashboard/screens/dashboard_screen.dart';
+import 'package:urban_x/features/splash/screens/splash_screen.dart';
+import 'package:urban_x/features/auth/screens/login_screen.dart';
+import 'package:urban_x/features/dashboard/screens/dashboard_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
