@@ -20,5 +20,6 @@ void main() {
     // Verify initial router destination loads splash screen.
     await tester.pumpAndSettle();
     expect(find.text('Splash'), findsOneWidget);
+
   });
 }
