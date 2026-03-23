@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../providers/ride_provider.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -9,6 +10,7 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(currentUserProvider);
+    final activeRides = ref.watch(activeRidesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -134,22 +136,15 @@ class DashboardScreen extends ConsumerWidget {
                     icon: Icons.directions_car,
                     title: 'Book a Ride',
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Ride booking coming soon!'),
-                        ),
-                      );
+                      ref.read(resetBookingProvider)();
+                      context.go('/ride-type-selection');
                     },
                   ),
                   _QuickActionCard(
                     icon: Icons.history,
                     title: 'Ride History',
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Ride history coming soon!'),
-                        ),
-                      );
+                      context.go('/ride-history');
                     },
                   ),
                   _QuickActionCard(
@@ -174,9 +169,26 @@ class DashboardScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
 
+              // Active Rides Section
+              if (activeRides.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Active Rides',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Active rides will be displayed here
+                  ],
+                ),
+
               // Features Section
               const Text(
-                'Features Coming Soon',
+                'Features',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -185,20 +197,26 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               _FeatureCard(
                 icon: Icons.location_on,
-                title: 'Real-time Tracking',
-                description: 'Track your ride in real-time with live GPS',
+                title: 'Location Selection',
+                description: 'Enter pickup and dropoff locations',
               ),
               const SizedBox(height: 12),
               _FeatureCard(
                 icon: Icons.card_travel,
-                title: 'Multiple Payment Options',
-                description: 'Pay with card, wallet, or cash',
+                title: 'Multiple Ride Types',
+                description: 'Choose from Economy, Comfort, Premium, and XL',
               ),
               const SizedBox(height: 12),
               _FeatureCard(
                 icon: Icons.star,
                 title: 'Ratings & Reviews',
-                description: 'Rate drivers and leave feedback',
+                description: 'Rate drivers and see their reviews',
+              ),
+              const SizedBox(height: 12),
+              _FeatureCard(
+                icon: Icons.map,
+                title: 'Live Tracking',
+                description: 'Track your ride in real-time (Coming soon)',
               ),
             ],
           ),

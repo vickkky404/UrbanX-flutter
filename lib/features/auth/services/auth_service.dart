@@ -12,7 +12,7 @@ class AuthService {
     try {
       _prefs = await SharedPreferences.getInstance();
     } catch (e) {
-      print('SharedPreferences init error: $e');
+      // Ignore initialization error
     }
   }
 
@@ -157,7 +157,7 @@ class AuthService {
         );
       }
     } catch (e) {
-      print('Error retrieving saved user: $e');
+      // Error retrieving saved user
     }
     return null;
   }
@@ -167,7 +167,7 @@ class AuthService {
     try {
       await _prefs.setString('user_data', user.toJson().toString());
     } catch (e) {
-      print('Error saving user locally: $e');
+      // Error saving user locally
     }
   }
 
