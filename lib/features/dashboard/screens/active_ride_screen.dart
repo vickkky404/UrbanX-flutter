@@ -12,20 +12,17 @@ class ActiveRideScreen extends ConsumerStatefulWidget {
 }
 
 class _ActiveRideScreenState extends ConsumerState<ActiveRideScreen> {
-  late RideStatus _statusUpdate;
   int _statusIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _statusUpdate = RideStatus.pending;
     
     // Simulate status updates
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
           _statusIndex = 1;
-          _statusUpdate = RideStatus.accepted;
         });
       }
     });
@@ -34,14 +31,14 @@ class _ActiveRideScreenState extends ConsumerState<ActiveRideScreen> {
       if (mounted) {
         setState(() {
           _statusIndex = 2;
-          _statusUpdate = RideStatus.arriving;
         });
       }
     });
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final ref = this.ref;
     final ride = ref.watch(currentRideProvider);
 
     if (ride == null) {
