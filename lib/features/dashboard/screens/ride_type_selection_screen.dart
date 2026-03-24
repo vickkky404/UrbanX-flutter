@@ -41,6 +41,8 @@ class RideTypeSelectionScreen extends ConsumerWidget {
             ...RideType.values.map((type) {
               final info = RideTypeInfo.getInfo(type);
               final isSelected = selectedType == type;
+              
+              return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: GestureDetector(
                   onTap: () {
