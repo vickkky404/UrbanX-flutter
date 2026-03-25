@@ -17,7 +17,7 @@ class UserModel {
     required this.createdAt,
   });
 
-  // Convert to JSON
+
   Map<String, dynamic> toJson() => {
     'uid': uid,
     'email': email,
@@ -28,7 +28,8 @@ class UserModel {
     'createdAt': createdAt.toIso8601String(),
   };
 
-  // Convert from JSON
+
+
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
     uid: json['uid'] as String,
     email: json['email'] as String,
@@ -41,7 +42,6 @@ class UserModel {
         : DateTime.now(),
   );
 
-  // Copy with method for immutability
   UserModel copyWith({
     String? uid,
     String? email,
