@@ -32,7 +32,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     _animationController.forward();
     
-    // Schedule navigation after animation completes
     _navigationTimer = Timer(const Duration(seconds: 3), _navigateAway);
   }
 
