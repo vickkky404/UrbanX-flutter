@@ -273,6 +273,7 @@ After authentication is working:
 2. **Phase 3**: Real-time driver tracking and live updates
 3. **Phase 4**: Payment integration
 4. **Phase 5**: Rating and review system
+5. **Phase 6**: Push notification for rider and driver communication
 
 ---
 
