@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../auth/providers/auth_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -37,12 +36,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   void _navigateAway() {
     if (mounted) {
-      final authState = ref.read(authStateProvider);
-      if (authState.value != null) {
-        context.go('/dashboard');
-      } else {
-        context.go('/login');
-      }
+      // Navigate to home screen (accessible to all users)
+      context.go('/home');
     }
   }
 
