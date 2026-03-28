@@ -4,10 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../auth/providers/auth_provider.dart';
-import '../providers/location_provider.dart';
-import '../services/map_service.dart';
-import '../../../shared/widgets/location_search_widget.dart';
-import '../../../shared/widgets/ride_estimation_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
