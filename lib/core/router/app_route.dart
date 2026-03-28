@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:urban_x/features/splash/screens/splash_screen.dart';
 import 'package:urban_x/features/auth/screens/login_screen.dart';
 import 'package:urban_x/features/auth/screens/signup_screen.dart';
-import 'package:urban_x/features/dashboard/screens/home_screen.dart';
+import 'package:urban_x/features/dashboard/screens/home_screen_v2.dart';
 import 'package:urban_x/features/dashboard/screens/dashboard_screen.dart';
 import 'package:urban_x/features/dashboard/screens/ride_type_selection_screen.dart';
 import 'package:urban_x/features/dashboard/screens/ride_details_screen.dart';
