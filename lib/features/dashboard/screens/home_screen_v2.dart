@@ -5,7 +5,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../providers/location_provider.dart';
+import '../providers/promo_provider.dart';
 import '../models/ride_model.dart';
+import '../models/promo_model.dart';
 
 class HomeScreenV2 extends ConsumerStatefulWidget {
   const HomeScreenV2({super.key});
@@ -255,6 +257,8 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
 
                   if (pickupLocation != null && dropoffLocation != null) ...[
                     const SizedBox(height: 24),
+                    _buildPromoCodeSection(),
+                    const SizedBox(height: 20),
                     _buildEstimatedFareSection(),
                     const SizedBox(height: 20),
                     _buildRideOptions(currentUser),
@@ -396,7 +400,223 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
     );
   }
 
+  Widget _buildPromoCodeSection() {
+    final promoInput = ref.watch(promoCodeInputProvider);
+    final appliedPromo = ref.watch(applyPromoCodeProvider);
+    final availablePromos = ref.watch(availablePromoCodesProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Apply Promo Code',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Promo code input
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: appliedPromo != null
+                  ? Colors.green
+                  : Colors.grey[300]!,
+              width: appliedPromo != null ? 2 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  onChanged: (value) {
+                    ref.read(promoCodeInputProvider.notifier).state =
+                        value.toUpperCase();
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Enter promo code',
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    enabled: appliedPromo == null,
+                  ),
+                ),
+              ),
+              if (appliedPromo != null)
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      ref.read(applyPromoCodeProvider.notifier).clear();
+                      ref.read(promoCodeInputProvider.notifier).state = '';
+                    },
+                  ),
+                )
+              else
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: promoInput.isEmpty
+                          ? null
+                          : () async {
+                              await ref
+                                  .read(applyPromoCodeProvider.notifier)
+                                  .apply(promoInput, 150);
+                            },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: promoInput.isEmpty
+                              ? Colors.grey[300]
+                              : const Color(0xFF6750A4),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'Apply',
+                          style: TextStyle(
+                            color: promoInput.isEmpty
+                                ? Colors.grey[600]
+                                : Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        if (appliedPromo != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.green.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '${appliedPromo.code} applied - ${appliedPromo.description}',
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Available Offers',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                availablePromos.when(
+                  data: (promos) {
+                    final validPromos =
+                        promos.where((p) => p.isValid).toList();
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: validPromos.take(3).map((promo) {
+                          return GestureDetector(
+                            onTap: () {
+                              ref.read(promoCodeInputProvider.notifier)
+                                  .state = promo.code;
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF6750A4)
+                                    .withValues(alpha: 0.1),
+                                border: Border.all(
+                                  color: const Color(0xFF6750A4),
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                promo.code,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF6750A4),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  },
+                  loading: () => const SizedBox(
+                    height: 30,
+                    child: Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                  error: (err, _) => Text(
+                    'Could not load offers',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _buildRideTypeOptions() {
+    final appliedPromo = ref.watch(applyPromoCodeProvider);
+
     return ListView(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -406,6 +626,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
           125,
           8,
           3.5,
+          appliedPromo,
         ),
         const SizedBox(height: 8),
         _buildRideCard(
@@ -413,6 +634,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
           175,
           7,
           3.5,
+          appliedPromo,
         ),
         const SizedBox(height: 8),
         _buildRideCard(
@@ -420,6 +642,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
           225,
           6,
           3.5,
+          appliedPromo,
         ),
       ],
     );
@@ -430,13 +653,17 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
     double estimatedFare,
     int estimatedTime,
     double distance,
+    PromoCode? appliedPromo,
   ) {
+    final discountAmount = appliedPromo?.calculateDiscount(estimatedFare) ?? 0;
+    final finalFare = estimatedFare - discountAmount;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
+          color: discountAmount > 0 ? const Color(0xFF6750A4) : Colors.grey[300]!,
+          width: discountAmount > 0 ? 2 : 1,
         ),
         borderRadius: BorderRadius.circular(12),
         color: Colors.white,
@@ -494,21 +721,48 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                '₹${estimatedFare.toStringAsFixed(0)}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Color(0xFF6750A4),
+              if (discountAmount > 0) ...[
+                Text(
+                  '₹${estimatedFare.toStringAsFixed(0)}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[500],
+                    decoration: TextDecoration.lineThrough,
+                  ),
                 ),
-              ),
-              Text(
-                'Estimated',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey[500],
+                Text(
+                  '₹${finalFare.toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Color(0xFF6750A4),
+                  ),
                 ),
-              ),
+                Text(
+                  'Save ₹${discountAmount.toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ] else ...[
+                Text(
+                  '₹${estimatedFare.toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Color(0xFF6750A4),
+                  ),
+                ),
+                Text(
+                  'Estimated',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey[500],
+                  ),
+                ),
+              ],
             ],
           ),
         ],
